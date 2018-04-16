@@ -19,6 +19,11 @@ class CwgMedalTallySpider(scrapy.Spider):
     allowed_domains = ['en.wikipedia.org']
     start_urls = ['https://en.wikipedia.org/wiki/1930_British_Empire_Games']
 
+    custom_settings = {
+        # To populate the fields in csv in particular order, use below property :
+        'FEED_EXPORT_FIELDS': ['Year', 'HostCountry', 'Country', 'Gold', 'Silver', 'Bronze', 'Total']
+    }
+
     def parse(self, response):
         # hardcoding year_pagination table (Reason being id attribute was not populating in scrapy response object)
         pagination_table = response.css('.nowraplinks')[1]
