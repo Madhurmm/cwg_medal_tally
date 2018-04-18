@@ -29,7 +29,7 @@ class CwgMedalTallySpider(scrapy.Spider):
         pagination_table = response.css('.nowraplinks')[1]
 
         for a_tag in pagination_table.css('.navbox-list.navbox-odd.hlist a'):
-            #get url to next evemt
+            # get url to next evemt
             relative_url = a_tag.css('::attr(href)').extract_first()
             base_url = '/'.join(response.url.split('/')[:-1])
             absolute_url = urljoin(base_url, relative_url)
@@ -38,16 +38,17 @@ class CwgMedalTallySpider(scrapy.Spider):
             meta = {'year': year}
             yield response.follow(absolute_url, self.parse_medals_page, meta=meta)
 
-
     def parse_medals_page(self, response):
 
         table_data = response.css('.wikitable.sortable.plainrowheaders tr')
         table_data = table_data[1:-1]  # removing header and footer row
         year = response.meta.get('year')
+        host_country = response.css(
+            '.wikitable.sortable.plainrowheaders tr[bgcolor] td[align=left] a::text, '
+            '.wikitable.sortable.plainrowheaders tr[style] a::text').extract_first()
+
         for tr in table_data:
             try:
-                host_country = response.css(
-                    '.wikitable.sortable.plainrowheaders tr[style] td[align=left] a::text').extract_first()
                 country = tr.css('td[align=left] a::text').extract_first()
                 g, s, b, t = tuple(tr.css('td[align=left] ~ td::text').extract())
 
@@ -55,8 +56,6 @@ class CwgMedalTallySpider(scrapy.Spider):
 
                 try:
                     # for https://en.wikipedia.org/wiki/2006_Commonwealth_Games_medal_table
-                    host_country = response.css(
-                        '.wikitable.sortable.plainrowheaders tr[style] td[style] a::text').extract_first()
                     country = tr.css('td[style] a::text').extract_first()
                     g, s, b, t = tuple(tr.css('td[style] ~ td::text').extract())
 
