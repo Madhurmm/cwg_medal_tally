@@ -21,7 +21,10 @@ class CwgMedalTallySpider(scrapy.Spider):
 
     custom_settings = {
         # To populate the fields in csv in particular order, use below property :
-        'FEED_EXPORT_FIELDS': ['Year', 'HostCountry', 'Country', 'Gold', 'Silver', 'Bronze', 'Total']
+        'FEED_EXPORT_FIELDS': ['Year', 'HostCountry', 'Country', 'Gold', 'Silver', 'Bronze', 'Total'],
+        'FEED_EXPORTERS': {
+            'csv': 'cwgmedaltally.feed_export.FixLineCsvItemExporter'
+        }
     }
 
     def parse(self, response):
